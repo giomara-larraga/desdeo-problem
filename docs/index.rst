@@ -59,6 +59,7 @@ Then, create a new virtual environment for the project and install the package i
    :maxdepth: 2
    :caption: Contents
 
+   problems
    api
    examples
 
