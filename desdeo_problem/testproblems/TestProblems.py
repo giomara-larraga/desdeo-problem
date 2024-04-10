@@ -1,4 +1,4 @@
-from optproblems import zdt, dtlz
+from optproblems import zdt, dtlz, wfg
 from desdeo_problem.problem.Variable import variable_builder
 from desdeo_problem.problem.Objective import VectorObjective
 from desdeo_problem.problem.Problem import MOProblem
@@ -7,22 +7,6 @@ from desdeo_problem.problem.Problem import ProblemError
 
 
 def test_problem_builder(name: str, n_of_variables: int = None, n_of_objectives: int = None) -> MOProblem:
-    """Build test problems. Currently supported: ZDT1-4, ZDT6, and DTLZ1-7.
-
-    Args:
-        name (str): Name of the problem in all caps. For example: "ZDT1", "DTLZ4", etc.
-        n_of_variables (int, optional): Number of variables. Required for DTLZ problems,
-            but can be skipped for ZDT problems as they only support one variable value.
-        n_of_objectives (int, optional): Required for DTLZ problems,
-            but can be skipped for ZDT problems as they only support one variable value.
-
-    Raises:
-        ProblemError: When one of many issues occur while building the MOProblem
-            instance.
-
-    Returns:
-        MOProblem: The test problem object
-    """
     problems = {
         "ZDT1": zdt.ZDT1,
         "ZDT2": zdt.ZDT2,
@@ -37,6 +21,16 @@ def test_problem_builder(name: str, n_of_variables: int = None, n_of_objectives:
         "DTLZ5": dtlz.DTLZ5,
         "DTLZ6": dtlz.DTLZ6,
         "DTLZ7": dtlz.DTLZ7,
+        "WFG1": wfg.WFG1,
+        "WFG2": wfg.WFG2,
+        "WFG3": wfg.WFG3,
+        "WFG4": wfg.WFG4,
+        "WFG5": wfg.WFG5,
+        "WFG6": wfg.WFG6,
+        "WFG7": wfg.WFG7,
+        "WFG8": wfg.WFG8,
+        "WFG9": wfg.WFG9,
+        
     }
     num_var = {"ZDT1": 30, "ZDT2": 30, "ZDT3": 30, "ZDT4": 10, "ZDT6": 10}
     if not (name in problems.keys()):
@@ -67,11 +61,20 @@ def test_problem_builder(name: str, n_of_variables: int = None, n_of_objectives:
             msg = "Please provide both number of variables and objectives" + " for the DTLZ problems"
             raise ProblemError(msg)
         obj_func = problems[name](n_of_objectives, n_of_variables)
+    elif "WFG" in name:
+        if (n_of_variables is None) or (n_of_objectives is None):
+            msg = "Please provide both number of variables and objectives" + " for the WFG problems"
+            raise ProblemError(msg)
+        l = 10 #default parameters
+        k = n_of_variables - l
+        obj_func = problems[name](n_of_objectives, n_of_variables, k)
     else:
         msg = "How did you end up here?"
         raise ProblemError(msg)
     lower_limits = obj_func.min_bounds
+
     upper_limits = obj_func.max_bounds
+    #print(upper_limits)
     var_names = ["x" + str(i + 1) for i in range(n_of_variables)]
     obj_names = ["f" + str(i + 1) for i in range(n_of_objectives)]
     variables = variable_builder(
